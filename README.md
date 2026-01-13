@@ -1,0 +1,1 @@
+An advanced Tic-Tac-Toe engine featuring a Minimax algorithm enhanced by Alpha-Beta Pruning for optimal decision-making. It also includes a custom-built Single-Layer Perceptron (Machine Learning) model that can be trained on external datasets to predict moves and improve performance.
