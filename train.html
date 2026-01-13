@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Train ML Model - Tic Tac Toe</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .upload-box {
+      border: 2px dashed #0dcaf0;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+    }
+    .glow {
+      color: cyan;
+      text-shadow: 0px 0px 12px cyan;
+    }
+  </style>
+</head>
+
+<body class="bg-dark text-light">
+
+<div class="container py-5">
+
+  <h1 class="text-center glow mb-5">Train Perceptron Model</h1>
+
+  <div class="upload-box mb-4">
+    <h4 class="mb-3">Upload Tic-Tac-Toe Dataset (CSV)</h4>
+    <input type="file" id="csvFile" accept=".csv" class="form-control w-50 mx-auto">
+    <button id="loadBtn" class="btn btn-info mt-3">Load & Preview</button>
+  </div>
+
+  <div id="previewContainer" class="mt-4 d-none">
+    <h4 class="mb-3">Dataset Preview</h4>
+    <div class="table-responsive">
+      <table class="table table-dark table-bordered" id="previewTable"></table>
+    </div>
+  </div>
+
+  <div id="trainSection" class="mt-5 d-none">
+    <h3 class="glow mb-3">Training Configuration</h3>
+    <p>
+      Train/Test Split: <strong>80% / 20%</strong><br>
+      Training runs: <strong>Single run</strong><br>
+      Epochs: <strong>100</strong>
+    </p>
+    <button id="trainBtn" class="btn btn-success btn-lg">Train Perceptron</button>
+  </div>
+
+  <div id="results" class="mt-5 d-none">
+    <h3 class="glow mb-3">Training Results</h3>
+
+    <div class="p-4 bg-secondary rounded">
+      <p><strong>Weights:</strong> <span id="weightsOut"></span></p>
+      <p><strong>Bias:</strong> <span id="biasOut"></span></p>
+      <p><strong>Accuracy:</strong> <span id="accOut"></span></p>
+    </div>
+
+    <div class="mt-3">
+      <button id="saveModel" class="btn btn-warning">Save Model</button>
+      <button id="goPlayBtn" class="btn btn-primary ms-2 d-none" onclick="goToPlay()">
+        Go to Play Game
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="ml.js"></script>
+
+<script>
+  let dataset = [];
+  let headerNames = [];
+
+  document.getElementById("loadBtn").onclick = async () => {
+    let file = document.getElementById("csvFile").files[0];
+    if (!file) {
+      alert("Please upload CSV file");
+      return;
+    }
+
+    let text = await file.text();
+    let lines = text.trim().split("\n").map(l => l.split(","));
+
+    headerNames = lines[0];
+    dataset = lines.slice(1).map(row => row.map(Number));
+
+    let table = document.getElementById("previewTable");
+    table.innerHTML = "";
+
+    let headerRow = "<tr>";
+    headerNames.forEach(h => headerRow += `<th>${h}</th>`);
+    headerRow += "</tr>";
+    table.innerHTML += headerRow;
+
+    dataset.slice(0, 10).forEach(r => {
+      let row = "<tr>";
+      r.forEach(c => row += `<td>${c}</td>`);
+      row += "</tr>";
+      table.innerHTML += row;
+    });
+
+    document.getElementById("previewContainer").classList.remove("d-none");
+    document.getElementById("trainSection").classList.remove("d-none");
+  };
+
+  document.getElementById("trainBtn").onclick = () => {
+    if (dataset.length === 0) {
+      alert("Load dataset first");
+      return;
+    }
+
+    let result = trainPerceptron(dataset, 100);
+
+    document.getElementById("weightsOut").innerText =
+            `[ ${result.weights.join(", ")} ]`;
+
+    document.getElementById("biasOut").innerText =
+            result.bias.toFixed(3);
+
+    document.getElementById("accOut").innerText =
+            (result.accuracy * 100).toFixed(2) + "% (single training run)";
+
+    document.getElementById("results").classList.remove("d-none");
+
+    window.modelWeights = result.weights;
+    window.modelBias = result.bias;
+  };
+
+  document.getElementById("saveModel").onclick = () => {
+    if (!window.modelWeights) {
+      alert("Train the model first!");
+      return;
+    }
+
+    localStorage.setItem("modelWeights", JSON.stringify(window.modelWeights));
+    localStorage.setItem("modelBias", window.modelBias);
+
+    alert("Model saved successfully!");
+    document.getElementById("goPlayBtn").classList.remove("d-none");
+  };
+
+  function goToPlay() {
+    window.location.href = "play.html";
+  }
+</script>
+
+</body>
+</html>

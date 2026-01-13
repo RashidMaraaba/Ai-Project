@@ -1,0 +1,92 @@
+
+
+body {
+    background: #0d0f14;
+    color: #e9ecef;
+    font-family: "Poppins", sans-serif;
+}
+
+
+.glow {
+    color: cyan;
+    text-shadow: 0 0 12px cyan, 0 0 25px rgba(0, 255, 255, 0.6);
+}
+
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+
+.btn-info,
+.btn-success,
+.btn-warning {
+    box-shadow: 0 0 12px rgba(0,255,255,0.4);
+}
+
+
+#board td {
+    width: 100px;
+    height: 100px;
+    border: 2px solid cyan;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#board td:hover {
+    background: rgba(0,255,255,0.15);
+}
+
+
+.table-dark td,
+.table-dark th {
+    color: #d1d1d1;
+}
+
+
+#aiScores {
+    background: rgba(255, 255, 255, 0.08);
+    border-left: 4px solid cyan;
+    font-size: 15px;
+}
+
+
+.upload-box {
+    transition: 0.3s;
+}
+
+.upload-box:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: #17e9ff;
+}
+
+
+@keyframes neonPulse {
+    0% { text-shadow: 0 0 10px cyan; }
+    50% { text-shadow: 0 0 20px cyan; }
+    100% { text-shadow: 0 0 10px cyan; }
+}
+
+.glow {
+    animation: neonPulse 2s infinite ease-in-out;
+}
+
+
+.form-select, .form-control {
+    background-color: #1a1f27;
+    border: 1px solid #2e3a4d;
+    color: #e9ecef;
+}
+
+
+.form-select:hover, .form-control:hover {
+    border-color: cyan;
+}

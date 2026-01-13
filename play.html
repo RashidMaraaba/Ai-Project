@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Play Tic Tac Toe AI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 45px;
+      font-weight: bold;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      border: 2px solid #0dcaf0;
+    }
+
+    #board td:hover {
+      background: rgba(0,255,255,0.1);
+    }
+
+    .glow {
+      color: cyan;
+      text-shadow: 0px 0px 12px cyan;
+    }
+  </style>
+</head>
+
+<body class="bg-dark text-light">
+
+<div class="container py-5">
+
+  <h1 class="text-center glow mb-5">Tic Tac Toe AI</h1>
+
+  <div class="row mb-5">
+    <div class="col-md-4">
+      <label class="form-label">Choose Your Symbol</label>
+      <select class="form-select" id="playerSymbol">
+        <option value="X">X</option>
+        <option value="O">O</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Difficulty Level</label>
+      <select class="form-select" id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Evaluation Function</label>
+      <select class="form-select" id="evalType">
+        <option value="classical">Classical (Heuristic)</option>
+        <option value="ml">Machine Learned (ML Model)</option>
+      </select>
+    </div>
+  </div>
+
+  <table id="board" class="mx-auto text-center">
+    <tr>
+      <td class="cell" id="0"></td>
+      <td class="cell" id="1"></td>
+      <td class="cell" id="2"></td>
+    </tr>
+    <tr>
+      <td class="cell" id="3"></td>
+      <td class="cell" id="4"></td>
+      <td class="cell" id="5"></td>
+    </tr>
+    <tr>
+      <td class="cell" id="6"></td>
+      <td class="cell" id="7"></td>
+      <td class="cell" id="8"></td>
+    </tr>
+  </table>
+
+  <div class="text-center mt-4">
+    <button class="btn btn-warning" onclick="resetGame()">Restart Game</button>
+  </div>
+
+  <hr class="my-5">
+
+  <div>
+    <h3 class="glow">AI Move Evaluation Scores</h3>
+    <p class="text-muted">Displayed after each AI turn</p>
+    <div id="aiScores" class="p-3 bg-secondary rounded"></div>
+  </div>
+
+</div>
+
+<script src="ml.js"></script>
+<script src="ai.js"></script>
+
+<script>
+
+  let board = ["","","","","","","","",""];
+  let player = "X";
+  let ai = "O";
+  let gameOver = false;
+
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.onclick = () => playerMove(cell.id);
+  });
+
+  function resetGame() {
+    board = ["","","","","","","","",""];
+    document.querySelectorAll(".cell").forEach(c => c.innerText = "");
+    gameOver = false;
+    document.getElementById("aiScores").innerHTML = "";
+  }
+
+  function isDraw(board) {
+    return !board.includes("");
+  }
+
+  function playerMove(index) {
+    if (gameOver || board[index] !== "") return;
+
+    player = document.getElementById("playerSymbol").value;
+    ai = (player === "X") ? "O" : "X";
+
+    board[index] = player;
+    document.getElementById(index).innerText = player;
+
+    if (checkWinner(board)) {
+      alert("You win!");
+      gameOver = true;
+      return;
+    }
+
+    if (isDraw(board)) {
+      alert("Draw!");
+      gameOver = true;
+      return;
+    }
+
+    aiTurn();
+  }
+
+  function aiTurn() {
+    if (gameOver) return;
+
+    let difficulty = document.getElementById("difficulty").value;
+    let evalType = document.getElementById("evalType").value;
+
+    let moveInfo = getBestMove(board, ai, player, difficulty, evalType);
+
+    board[moveInfo.index] = ai;
+    document.getElementById(moveInfo.index).innerText = ai;
+
+    displayScores(moveInfo.scores);
+
+    if (checkWinner(board)) {
+      alert("AI wins!");
+      gameOver = true;
+      return;
+    }
+
+    if (isDraw(board)) {
+      alert("Draw!");
+      gameOver = true;
+      return;
+    }
+  }
+
+  function displayScores(scores) {
+    let out = "";
+    for (let move in scores) {
+      out += `<div>Move ${move}: score ${scores[move].toFixed(2)}</div>`;
+    }
+    document.getElementById("aiScores").innerHTML = out;
+  }
+
+</script>
+
+</body>
+</html>
